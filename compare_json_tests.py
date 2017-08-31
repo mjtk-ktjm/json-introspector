@@ -1,8 +1,9 @@
 """Docstring."""
 import unittest
+from hashlib import md5
 from compare_json import CompareJSON
 
-class BasicsTests(unittest.TestCase):
+class CompareJSONTests(unittest.TestCase):
     """ """
     global comparator
     comparator = CompareJSON('string1', 'string2')
@@ -62,15 +63,25 @@ class BasicsTests(unittest.TestCase):
 
     def test_hash_json(self):
         """Test that hash returns expected value for a string."""
-        pass
+        # pre-sorted str object
+        self.assertEqual('5348ed1f4cd2f73e576bb66b866f2800', \
+            comparator.hash_json('{"a_1": [{"a_2": 2, "f_2": 3, "g_2": 1}], "c_3": 1}'))
+        # pre-sorted dict object
+        self.assertEqual('5348ed1f4cd2f73e576bb66b866f2800', \
+            comparator.hash_json({"a_1": [{"a_2": 2, "f_2": 3, "g_2": 1}], "c_3": 1}))
+        # unsorted dict object
+        self.assertEqual('5348ed1f4cd2f73e576bb66b866f2800', \
+            comparator.hash_json({"a_1": [{"f_2": 3, "g_2": 1, "a_2": 2}], "c_3": 1}))
 
     def test_explode_json(self):
         """Test that valid JSON string explodes into valid object."""
-        pass
+        self.assertEqual({"a_1": [{"a_2": 2, "f_2": 3, "g_2": 1}], "c_3": 1}, \
+            comparator.explode_json('{"a_1": [{"a_2": 2, "f_2": 3, "g_2": 1}], "c_3": 1}'))
 
     def test_implode_json(self):
         """Test that valid JSON object implodes into valid string."""
-        pass
+        self.assertEqual('{"a_1": [{"a_2": 2, "f_2": 3, "g_2": 1}], "c_3": 1}', \
+            comparator.implode_json({"a_1": [{"a_2": 2, "f_2": 3, "g_2": 1}], "c_3": 1}))
 
     def test_is_leaf(self):
         """Test whether current node is a leaf type."""

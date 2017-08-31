@@ -8,7 +8,8 @@ return indicates True, they match. Else, the first mismatching
 leaf is returned along with False indicator for matching.
 
 """
-
+import json
+from hashlib import md5
 
 class CompareJSON(object):
     """Compare two json objects.
@@ -101,17 +102,23 @@ class CompareJSON(object):
         else:
             return False
 
-    def hash_json(self, json_obj):
-        """Hash a branch of a nested JSON object."""
-        pass
+    def hash_json(self, json_str):
+        """Hash a branch of a nested JSON object as a string."""
+        if type(json_str) is dict:
+            json_str = json.JSONEncoder(sort_keys=True).encode(json_str)
+            return md5(json_str.encode('utf-8')).hexdigest()
+        elif type(json_str) is str:
+            return md5(json_str.encode('utf-8')).hexdigest()
+        else:
+            raise TypeError
 
     def explode_json(self, json_str):
         """Explode a JSON string into an object."""
-        return False
+        return json.JSONDecoder().decode(json_str.encode('utf-8'))
 
     def implode_json(self, json_obj):
         """Implode a JSON object into a string."""
-        pass
+        return json.JSONEncoder(sort_keys=True).encode(json_obj)
 
     def is_leaf(self, node):
         """Evaluate whether the current node a leaf type."""
